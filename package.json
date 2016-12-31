@@ -1,5 +1,5 @@
 {
-  "name": "eslint-plugin-meetup-trn",
+  "name": "eslint-plugin-meetup",
   "version": "1.0.0",
   "description": "An ESLint plugin for validating trn message definitions in web platform apps",
   "main": "index.js",
@@ -12,12 +12,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/meetup/eslint-plugin-meetup-trn.git"
+    "url": "git+https://github.com/meetup/eslint-plugin-meetup.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/meetup/eslint-plugin-meetup-trn/issues"
+    "url": "https://github.com/meetup/eslint-plugin-meetup/issues"
   },
-  "homepage": "https://github.com/meetup/eslint-plugin-meetup-trn#readme"
+  "homepage": "https://github.com/meetup/eslint-plugin-meetup#readme"
 }

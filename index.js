@@ -1,6 +1,6 @@
 module.exports = {
     rules: {
-        'meetup-trn': require('./lib/rules/meetup-trn'),
+        'trn': require('./lib/rules/trn'),
     }
 };
 

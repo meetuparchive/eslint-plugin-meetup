@@ -1,4 +1,4 @@
-# An ESLint plugin for validating trn message definitions in web platform apps (meetup-trn)
+# An ESLint plugin for linting web platform apps (meetup-trn)
 
 Please describe the origin of the rule here.
 

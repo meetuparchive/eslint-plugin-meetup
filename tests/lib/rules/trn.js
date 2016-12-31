@@ -8,7 +8,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var rule = require("../../../lib/rules/meetup-trn"),
+var rule = require("../../../lib/rules/trn"),
 
     RuleTester = require("eslint").RuleTester;
 
@@ -18,7 +18,7 @@ var rule = require("../../../lib/rules/meetup-trn"),
 //------------------------------------------------------------------------------
 
 var ruleTester = new RuleTester();
-ruleTester.run("meetup-trn", rule, {
+ruleTester.run("trn", rule, {
 
     valid: [
         "defineMessages({ fooMessage: { id: 'foo', defaultMessage: 'bar', description: { text: 'foo bar', jira: '1234' } } });",
