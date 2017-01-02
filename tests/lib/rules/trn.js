@@ -9,8 +9,15 @@
 //------------------------------------------------------------------------------
 
 var rule = require("../../../lib/rules/trn"),
-
     RuleTester = require("eslint").RuleTester;
+
+let parserOptions = {
+	ecmaVersion: 6,
+	ecmaFeatures: {
+		experimentalObjectRestSpread: true,
+		jsx: true
+	}
+};
 
 
 //------------------------------------------------------------------------------
@@ -22,6 +29,10 @@ ruleTester.run("trn", rule, {
 
     valid: [
         "defineMessages({ fooMessage: { id: 'foo', defaultMessage: 'bar', description: { text: 'foo bar', jira: '1234' } } });",
+        {
+			code : "<FormattedMessage id='foo' defaultMessage='bar' description={{ text: 'foo bar', jira: '1234' }} />",
+			parserOptions: parserOptions,
+		},
     ],
 
     invalid: [
