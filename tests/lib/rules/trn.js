@@ -37,6 +37,10 @@ ruleTester.run("trn", rule, {
             code : "<FormattedMessage {...trn.follow} />",
             parserOptions: parserOptions,
         },
+        {
+            code : "<h2 />",
+            parserOptions: parserOptions,
+        },
     ],
 
     invalid: [
