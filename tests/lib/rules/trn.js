@@ -33,6 +33,10 @@ ruleTester.run("trn", rule, {
             code : "<FormattedMessage id='foo' defaultMessage='bar' description={{ text: 'foo bar', jira: '1234' }} />",
             parserOptions: parserOptions,
         },
+        {
+            code : "<FormattedMessage {...trn.follow} />",
+            parserOptions: parserOptions,
+        },
     ],
 
     invalid: [
