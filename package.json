@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests/lib/rules/trn.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/meetup/eslint-plugin-meetup/issues"
   },
-  "homepage": "https://github.com/meetup/eslint-plugin-meetup#readme"
+  "homepage": "https://github.com/meetup/eslint-plugin-meetup#readme",
+  "devDependencies": {
+    "eslint": "^3.12.2"
+  }
 }
