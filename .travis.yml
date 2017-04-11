@@ -1,0 +1,66 @@
+sudo: required
+language: node_js
+node_js:
+  - "7.8"
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
+branches:  # exclude tags
+  except:
+    - /^\d+$/
+
+env:
+  global:
+    # compiler command for Travis
+    - CXX=g++-4.8
+    # build number used by blt pipeline
+    - CI_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
+    - secure: "asq640uvla53g5yonijRC2QpBTcmB83xsYgl+ol4jUV5d36YMBppilVw4hUJJ4aL230FJkKr0ME64QbJRnD9tngGocgEuKTEi1HHgmX5xbxLYmIMZ0naKwHLhGbODpOXWJ1dJWxjTAxLYFgAVO4SFYWEie4+2lIJtZA6VKy2rzBIwEZC2NAMnrGTNzZjOMiasrTBdc9nWiHp7DYrF8t4KKLZfjafUoAbSy9x86NY6VyrfYRVTelRGEiDA/nTs2/oRqlrJ1Tfgy6XowvmTZuHH6CD4yV/oLXK0/GZF68xX7s2GTPSnKILW/sDS9zcxnJLv4z11ab5uKJ+9iAVGXEG0lOJpTs3xApx6xGCqZBTBDgpwV1YckfF7eqK9WE4QkOtO3Macp0ACo14uS7STDjh81vj94cU2Y2u17rw6+YO+ImlTBQ8SiYwXPw4mRBec7W1yw52I4G+QfQF+r+brY3ThpRNs3NpC6LGJQxDAVruYVFa0VMRiCmjA1h5NbMQrt+YhLi5DYlPWs6CrNrsxQZzUkv4Aq7o+eAju6TxyqYqoI5sPVgZKC82pxyJ39AWoC8vPO9doh/VkO/M6tJsbPYraZwYPiCoogijwTvfYk8wiEBNaHyaxipqbqSCkmZM6AFukL/nUkTAoeNE1vtLPfWjqUEnlZjX6eRWCbxJgr7NR7I="
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_df58331d1dbb_key -iv $encrypted_df58331d1dbb_iv -in '.travis/github_deploy_key.enc' -out github_deploy_key -d
+  - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+
+after_success:
+  - git config --global user.email "builds@travis-ci.com"
+  - git config --global user.name "Travis CI"
+  - $(yarn bin)/set-up-ssh --key "$encrypted_df58331d1dbb_key" --iv "$encrypted_df58331d1dbb_iv" --path-encrypted-key ".travis/github_deploy_key.enc"
+  - >
+    [ "${TRAVIS_BRANCH}" = "master" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&
+    export GIT_TAG=$(make version) ||
+    export GIT_TAG=$(make version)-beta
+  - >
+    [ "${TRAVIS_BRANCH}" = "master" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] &&
+    export NPM_TAG=latest ||
+    export NPM_TAG=beta
+  - echo "GIT_TAG=$GIT_TAG"
+  - echo "NPM_TAG=$NPM_TAG"
+  - >
+    [ "${TRAVIS_BRANCH}" = "master" ] &&
+    git commit -am "Commit .npmrc in tag pushed to npm" &&
+    npm version $GIT_TAG -m "Version $GIT_TAG built by Travis CI - https://travis-ci.com/$TRAVIS_REPO_SLUG/builds/$TRAVIS_JOB_ID" &&
+    git push --tags git@github.com:$TRAVIS_REPO_SLUG.git &&
+    npm publish --tag $NPM_TAG ||
+    echo "skipping versioning"
+
+notifications:
+  # slack integration
+  slack:
+    # encrypted token for the meetuphq slack channel
+    secure: J7M6eSgKWcbMqFs9Z2wSiHemn/IGOj8D/iB6AB2WXPYxr8+HQnzE6L96lmdwwSHNscB0tbg7y7xsMJHh+qeiiFgrMTAP7SbbT0kV9JdFWEJs4mwZtMBeQXbyfIJ/6HSFAsAjOxBgyhNnmx6PYKWKc+HGVcRui4dWJQRO24Nmfup93gJon63U/KsdXyvTpVN/dZ2EneQzhh/Evg0fXRxo9ETeqfeJ7KNTc0FvklVYdMe0d9cPKZ7/22qoYM7KKELE5ER/pDEeU42ttz4axm1l7WQAddDTQElH1oZP46Eq62Adu244bSuQUBIRwSBJOjUMnIzxn+2s3u4BfeSSGm9d8X8PD46fcaIKbIQaYOnlL9IK4s8jUhv1j0/qEHm3X5OJ7nrHM1FEmlY8R/lgCPyFI6Rr1z722n2iCxKrsasqFaF4bNQjp1L1hHmuFS1bAsGYouc6IRYVLntl0KHI5RpLWxCf6s3kaYHRb8sKcrZTXK+lf/Hlk0iWfXK+SU5vdKtjSrIJusWBU5AmcDKJbjTBbi85/zxJ86jYJy0WN2HsyR6K2mm+iGwTcBD52Ut/7J3PcHgJyp9kq+NQIxyuyk1PmGFWwy6N+xpirlFo7ztgSSEa2teD0gb9Feh1XaLiuAXtmMyaO8esAbXqygweLJGSXoTQgvjJ1Bvgb5GJSej0LME=
+
+    # dont notify successful builds
+    on_success: never
+
+    # always notify build failures
+    on_failure: always
+
